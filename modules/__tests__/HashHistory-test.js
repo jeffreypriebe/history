@@ -247,5 +247,38 @@ describeHistory('a hash history', () => {
       const history = createHistory({ basename: '/prefix' })
       expect(history.location.pathname).toEqual('/')
     })
+
+    describe('path params', () => {
+      it('strips the basename', () => {
+        window.history.replaceState(null, null, '#/PREFIX/PARAM/pathname')
+        const history = createHistory({ basename: '/prefix/:param/pathname' })
+        expect(history.location.pathname).toEqual('/')
+      })
+
+      it('strips when path is only the prefix', () => {
+        window.history.replaceState(null, null, '#/PREFIX/PARAM/pathname')
+        const history = createHistory({ basename: '/prefix/:param' })
+        expect(history.location.pathname).toEqual('/pathname')
+      })
+
+      it('strips when path is only the prefix with multiple params', () => {
+        window.history.replaceState(null, null, '#/PREFIX/PARAM/midfix/PARAM/pathname')
+        const history = createHistory({ basename: '/prefix/:param/midfix/:param' })
+        expect(history.location.pathname).toEqual('/pathname')
+      })
+
+      it('knows how to create hrefs', () => {
+        window.history.replaceState(null, null, '#/PREFIX/PARAM/pathname')
+        const history = createHistory({ basename: '/prefix/:param' })
+
+        const href = history.createHref({
+          pathname: '/newpath',
+          search: '?the=query',
+          hash: '#the-hash'
+        })
+
+        expect(href).toEqual('#/prefix/PARAM/newpath?the=query#the-hash')
+      })
+    })
   })
 })

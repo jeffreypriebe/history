@@ -6,6 +6,7 @@ import {
   stripLeadingSlash,
   stripTrailingSlash,
   hasBasename,
+  parseBasepath,
   stripBasename,
   createPath
 } from './PathUtils'
@@ -68,6 +69,7 @@ const createHashHistory = (props = {}) => {
     hashType = 'slash'
   } = props
   const basename = props.basename ? stripTrailingSlash(addLeadingSlash(props.basename)) : ''
+  let basepath = !basename ? basename : parseBasepath(window.location.hash.substring(1), basename)
 
   const { encodePath, decodePath } = HashPathCoders[hashType]
 
@@ -180,7 +182,7 @@ const createHashHistory = (props = {}) => {
   // Public interface
 
   const createHref = (location) =>
-    '#' + encodePath(basename + createPath(location))
+    '#' + encodePath(basepath + createPath(location))
 
   const push = (path, state) => {
     warning(

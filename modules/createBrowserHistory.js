@@ -5,6 +5,7 @@ import {
   addLeadingSlash,
   stripTrailingSlash,
   hasBasename,
+  parseBasepath,
   stripBasename,
   createPath
 } from './PathUtils'
@@ -52,6 +53,7 @@ const createBrowserHistory = (props = {}) => {
     keyLength = 6
   } = props
   const basename = props.basename ? stripTrailingSlash(addLeadingSlash(props.basename)) : ''
+  let basepath = !basename ? basename : parseBasepath(window.location.pathname, basename)
 
   const getDOMLocation = (historyState) => {
     const { key, state } = (historyState || {})
@@ -149,7 +151,7 @@ const createBrowserHistory = (props = {}) => {
   // Public interface
 
   const createHref = (location) =>
-    basename + createPath(location)
+    basepath + createPath(location)
 
   const push = (path, state) => {
     warning(
